@@ -48,30 +48,83 @@ ATTENZIONE: quando caricate il file assicuratevi che sia nella codifica UTF8
 '''
 
 def es(lista1, lista2):
-  array = list(range(1, len(lista2) + 1))
+  array = list(range(len(lista2)))
+  dLList = DoublyLinkedList()
 
-  dLList = Node(lista2[0]) #riempio la doubly linkedlist e l'array di puntatori
-  cur = dLList
-  array[lista2[0] - 1] = cur #nella posizione i ci sarà il puntatore del pilota i + 1
-  for x in range(1, len(lista2)):
-    cur.next = Node(lista2[x])
-    cur.next.prev = cur
-    cur = cur.next
-    array[lista2[x] - 1] = cur
+  for i in lista2: #create the dLList and fill the array
+    node = Node(i)
+    dLList.append(node)
+    array[i - 1] = node
 
   for event in lista1: #for each event
-    idPilot = int(event[1:])
+    node = array[int(event[1:]) - 1]
     if event[0] == 'e':
-      dLList = exitPilot(idPilot, array, dLList)
+      dLList.remove(node)
+      node = None
     elif event[0] == 's':
-      dLList = switchPilots(idPilot, array, dLList)
+      dLList.swap(node)
 
-  n = dLList
   finalList = []
+  n = dLList.head
   while (n != None): #fill the finalList
     finalList.append(n.val)
     n = n.next
   return finalList
+
+
+
+
+
+class DoublyLinkedList:
+  def __init__(self):
+    self.head = None
+    self.tail = None
+
+  def append(self, node):
+    if self.head == None:
+      self.head = node
+    else:
+      node.prev = self.tail
+      self.tail.next = node
+    self.tail = node
+
+  def remove(self, node):
+    if self.head.next == None: #if the list contains just one node
+      self.head = None
+    elif self.head == node: #if the node that has to be removed is the head
+      self.head = node.next
+      self.head.prev = None
+    else:
+      if node.next != None:
+        node.prev.next = node.next
+        node.next.prev = node.prev
+      else: #if the node that has to be removed is the tail
+        node.prev.next = None
+
+  def swap(self, node): #swap the node with the next one
+    prevX = node.prev
+    y = node.next
+    if self.head == node: #if the node being switched is the head
+      if y.next == None: #if the linkedlist is two-nodes long
+        node.next = None
+      else:
+        node.next = y.next
+        y.next.prev = node
+      node.prev = y
+      y.next = node
+      y.prev = None
+      self.head = y
+
+    else: #if the node being swithed is in the middle
+      if y.next == None: #if the node is the second-to-last
+        node.next = None
+      else:
+        node.next = y.next
+        y.next.prev = node
+      prevX.next = y
+      y.prev = prevX
+      y.next = node
+      node.prev = y
 
 
 
@@ -86,53 +139,6 @@ class Node:
     while here:
       yield here.val
       here = here.next
-
-
-def exitPilot(pilotNumber, array, dLList): #the return value is the updated head of the linkedList
-  x = array[pilotNumber - 1]
-  prevX = x.prev
-  y = x.next
-  if prevX == None: #if x is the head
-    if y == None: #if x is the last node in the linked list
-      return None #the dLList's head has to be set to None
-    else:
-      y.prev = None
-      return y
-  elif y == None: #if x is the tail
-    prevX.next = None
-  else:
-    prevX.next = y
-    y.prev = prevX
-  array[pilotNumber - 1] = None
-  return dLList
-
-def switchPilots(pilotNumber, array, dLList):
-  x = array[pilotNumber - 1] #the one being surpassed
-  prevX = x.prev
-  y = x.next
-  nextY = y.next
-  if prevX == None: #if the node being switched is the head
-    if nextY == None: #and the next one is the tail (the linkedlist in two-nodes long)
-      x.next = None
-    else:
-      x.next = nextY
-      nextY.prev = x
-    x.prev = y
-    y.next = x
-    y.prev = None
-    return y #if the dLList's head has to be updated (with the next node)
-
-  else: #if the node being swithed is in the middle
-    if nextY == None: #and the next one in the tail
-      x.next = None
-    else:
-      x.next = nextY
-      nextY.prev = x
-    prevX.next = y
-    y.prev = prevX
-    y.next = x
-    x.prev = y
-  return dLList
 
 
 
