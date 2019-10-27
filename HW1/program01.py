@@ -99,6 +99,7 @@ class DoublyLinkedList:
         node.prev.next = node.next
         node.next.prev = node.prev
       else: #if the node that has to be removed is the tail
+        self.tail = node.prev
         node.prev.next = None
 
   def swap(self, node): #swap the node with the next one
@@ -107,6 +108,7 @@ class DoublyLinkedList:
     if self.head == node: #if the node being switched is the head
       if y.next == None: #if the linkedlist is two-nodes long
         node.next = None
+        self.tail = node
       else:
         node.next = y.next
         y.next.prev = node
@@ -118,6 +120,7 @@ class DoublyLinkedList:
     else: #if the node being swithed is in the middle
       if y.next == None: #if the node is the second-to-last
         node.next = None
+        self.tail = node
       else:
         node.next = y.next
         y.next.prev = node
