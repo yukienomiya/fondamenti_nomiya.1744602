@@ -73,8 +73,6 @@ def es(lista1, lista2):
 
 
 
-
-
 class DoublyLinkedList:
   def __init__(self):
     self.head = None
@@ -89,46 +87,29 @@ class DoublyLinkedList:
     self.tail = node
 
   def remove(self, node):
-    if self.head.next == None: #if the list contains just one node
-      self.head = None
-    elif self.head == node: #if the node that has to be removed is the head
-      self.head = node.next
-      self.head.prev = None
+    if node.prev != None:
+      node.prev.next = node.next
     else:
-      if node.next != None:
-        node.prev.next = node.next
-        node.next.prev = node.prev
-      else: #if the node that has to be removed is the tail
-        self.tail = node.prev
-        node.prev.next = None
+      self.head = node.next
+    if node.next != None:
+      node.next.prev = node.prev
+    else:
+      self.tail = node.prev
 
   def swap(self, node): #swap the node with the next one
-    prevX = node.prev
-    y = node.next
-    if self.head == node: #if the node being switched is the head
-      if y.next == None: #if the linkedlist is two-nodes long
-        node.next = None
-        self.tail = node
-      else:
-        node.next = y.next
-        y.next.prev = node
-      node.prev = y
-      y.next = node
-      y.prev = None
-      self.head = y
-
-    else: #if the node being swithed is in the middle
-      if y.next == None: #if the node is the second-to-last
-        node.next = None
-        self.tail = node
-      else:
-        node.next = y.next
-        y.next.prev = node
-      prevX.next = y
-      y.prev = prevX
-      y.next = node
-      node.prev = y
-
+    nnode = node.next
+    if node.prev != None:
+      node.prev.next = nnode
+    else:
+      self.head = nnode
+    if nnode.next != None:
+      nnode.next.prev = node
+    else:
+      self.tail = node
+    nnode.prev = node.prev
+    node.next = nnode.next
+    nnode.next = node
+    node.prev = nnode
 
 
 class Node:
@@ -137,11 +118,6 @@ class Node:
     self.next = None
     self.prev = None
 
-  def __iter__(self):
-    here = self
-    while here:
-      yield here.val
-      here = here.next
 
 
 
