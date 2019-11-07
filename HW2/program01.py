@@ -46,28 +46,23 @@
 
 def es1(ftesto):
   f = open(ftesto)
-  length = int(f.read(1))
-  f.seek(2)
+  length = int(f.readline().rstrip())
   lines = f.readlines()
 
   words, shortestWord = parseWords(lines)
   subs = findSubstrings(shortestWord, length)
 
-  for w in words:
-    e = 0
-    while e < len(subs):
-      s = subs.pop()
-      if s not in w:
-        subs.pop()
-      else:
-        subs.add(s)
-      e += 1
+  idx = 0
+  while len(subs) > 1:
+    comp = findSubstrings(words[idx], length)
+    subs = subs.intersection(comp)
+    idx += 1
   sharedSS = subs.pop()
 
   result = list(range(0, len(words)))
 
   for i in range(len(words)):
-    result[i] = w.find(sharedSS) ### FIND
+    result[i] = words[i].find(sharedSS) ### FIND
 
   f.close()
   return result
@@ -83,13 +78,13 @@ def es1(ftesto):
 #in piu tiene traccia della parola piu corta
 def parseWords(list): #O(nLines)
   result = []
-  min = list[0]
+  min = ''
   str = ''
   for i in range(len(list)):
     list[i] = list[i].rstrip()
     str += list[i]
     if (i == len(list) - 1) or (list[i + 1] == '\n'): #la parola è finita
-      if len(str) < len(min):
+      if (len(str) < len(min)) or (not result):
         min = str
       result.append(str)
       str = ''
@@ -100,8 +95,10 @@ def parseWords(list): #O(nLines)
 #crea un insieme con tutte le sottostringhe lunghe length della parola più corta
 def findSubstrings(string, length): #O(len(shortestWord) / length)
   subs = set()
-  for i in range(len(string) - length):
-    subs.add(string[i : i + length])
+  for i in range(len(string) - (length - 1)):
+    s = string[i : i + length]
+    if string.count(s) == 1:
+      subs.add(s)
   return subs
 
 
