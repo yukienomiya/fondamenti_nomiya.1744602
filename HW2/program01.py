@@ -65,15 +65,10 @@ def es1(ftesto):
   result = list(range(0, len(words)))
 
   for i in range(len(words)):
-    result[i] = words[i].find(sharedSS) ### FIND
+    result[i] = words[i].find(sharedSS)
 
   f.close()
   return result
-
-
-
-
-
 
 
 
@@ -103,18 +98,6 @@ def findSubstrings(string, length): #O(len(string) - length + 1)
     if string.count(s) == 1:
       subs.add(s)
   return subs
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
