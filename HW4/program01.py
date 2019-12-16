@@ -67,9 +67,112 @@
 '''
 
 def es1(ftesto):
-    # inserite qui il vostro codice
+  f = open(ftesto)
+  fList = f.readlines()
+  f.close()
+  matrix, wordList = parseFile(fList)
+  result = [-1 for x in range(len(wordList))]
+  initDict = createDict(wordList)
+
+  for row in range(len(matrix)):
+    if len(initDict) > 0:
+      for col in range(len(matrix[0])):
+        initial = matrix[row][col]
+        if initial in initDict:
+          lista = initDict[initial]
+          wSet = set()
+          for word in lista:
+            pathStr = searchWord(matrix, '', word, col, row, 0)
+            if pathStr != None:
+              result[wordList.index(word)] = (row, col, pathStr)
+              wSet.add(word)
+          if len(wSet) > 0:
+            lSet = set(lista)
+            lSet = lSet.difference(wSet)
+            if len(lSet) > 0:
+              initDict[initial] = list(lSet)
+            else:
+              del initDict[initial]
+  return result
 
 
+
+def parseFile(fileList):
+  m = []
+  wL = []
+  idx = 0
+  for i in range(len(fileList)): #skips empty lines
+    line = fileList[i].strip()
+    if len(line) > 0:
+      idx = i
+      break
+  for i in range(idx, len(fileList)): #fills up the matrix
+    line = fileList[i].strip()
+    if len(line) > 0:
+      m.append(list(line))
+    else:
+      idx = i
+      break
+  for i in range(idx, len(fileList)): #skips empty lines
+    line = fileList[i].strip()
+    if len(line) > 0:
+      idx = i
+      break
+  for i in range(idx, len(fileList)): #fills up the wordList
+    s = ''
+    line = fileList[i]
+    for c in range(len(line)):
+      ch = line[c]
+      if ch == ' ':
+        if len(s) > 0:
+          wL.append(s)
+        s = ''
+        continue
+      if ch == '\n':
+        if len(s) > 0:
+          wL.append(s)
+        s = ''
+        break
+      elif c == len(line) - 1:
+        if len(s) > 0:
+          wL.append(s + ch)
+        s = ''
+        break
+      else:
+        s += ch
+  return m, wL
+
+
+def createDict(wordList):
+  initDict = {}
+  for word in wordList:
+    initDict.setdefault(word[0], [])
+    initDict[word[0]].append(word)
+  return initDict
+
+
+def searchWord(matrix, pathStr, word, x, y, i):
+  s1 = None
+  s2 = None
+  if (i == len(word) - 1):
+    return pathStr
+  else:
+    if ((x < len(matrix[0]) - 1) and (matrix[y][x + 1] == word[i + 1])) and ((y < len(matrix) - 1) and (matrix[y + 1][x] == word[i + 1])):
+      s1 = searchWord(matrix, pathStr + 'D', word, x + 1, y, i + 1)
+      s2 = searchWord(matrix, pathStr + 'G', word, x, y + 1, i + 1)
+    elif (x < len(matrix[0]) - 1) and (matrix[y][x + 1] == word[i + 1]):
+      s1 = searchWord(matrix, pathStr + 'D', word, x + 1, y, i + 1)
+    elif (y < len(matrix) - 1) and (matrix[y + 1][x] == word[i + 1]):
+      s1 = searchWord(matrix, pathStr + 'G', word, x, y + 1, i + 1)
+
+    if (s1 == None and s2 == None):
+      return None
+    elif s1 != None:
+      return s1
+    elif s2 != None:
+      return s2
+    else:
+      return s1
 
 
 
@@ -78,5 +181,5 @@ def es1(ftesto):
 
 
 if __name__ == '__main__':
-    pass
+  pass
     # inserite qui i vostri test
