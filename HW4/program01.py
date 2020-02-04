@@ -150,7 +150,6 @@ def createLetterSets(matrix, wordList):
 def filterWords(wordList, missingLettersSet):
   for w in wordList:
     letters = set(w)
-    size = len(letters)
     letters = letters.intersection(missingLettersSet)
     if len(letters) > 0:
       wordList.remove(w)
@@ -173,9 +172,6 @@ def searchWord(matrix, pathStr, word, x, y, i):
       return s1
     elif s2 != None:
       return s2
-
-
-
 
 
 
